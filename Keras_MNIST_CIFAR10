@@ -16,9 +16,8 @@ import os
 import psutil
 import time
 import datetime
-import numpy as np
 
-Dataset = cifar10 ##Change dataset name here options:(cifar10,mnist)
+Dataset = cifar10
 MNIST_batch_size = 128
 MNIST_num_classes = 10
 MNIST_epochs = 12
@@ -47,9 +46,27 @@ def CategorizeData(y_train,y_test,num_classes):
     y_train = keras.utils.to_categorical(y_train, num_classes)
     y_test = keras.utils.to_categorical(y_test, num_classes)
     return y_train, y_test
+
+def StartMonitoring():
+        process = psutil.Process(os.getpid())
+        print("Before memory_percent", process.memory_percent())
+        print(psutil.cpu_percent(percpu=True))
+        start = time.time()
+        return start
+    
+    
+def EndMonitoring(start):
+        end = time.time()        
+        process = psutil.Process(os.getpid())
+        print("after memory_percent",process.memory_percent())
+        print(psutil.cpu_percent(percpu=True))
+        print("Time Elapsed")
+        print(str(datetime.timedelta(seconds= end - start)))
+        print(end - start)     
         
-def main():
-    if Dataset is mnist:
+        
+    
+def RunMNIST():
         x_train, y_train, x_test, y_test = loadData()
         x_train = x_train.reshape(x_train.shape[0], MNIST_img_rows, MNIST_img_cols, 1)
         x_test = x_test.reshape(x_test.shape[0], MNIST_img_rows, MNIST_img_cols, 1)
@@ -77,41 +94,23 @@ def main():
         MNIST_model.compile(loss='categorical_crossentropy',
                       optimizer=MNIST_sgd,
                       metrics=['accuracy'])
-        
+    
+        start = StartMonitoring()
         #Training the model
-        MNIST_process = psutil.Process(os.getpid())
-        print("before memory_percent",MNIST_process.memory_percent())
-        print(psutil.cpu_percent(percpu=True))
-        
-        MNIST_start = time.time()
-        print("start",MNIST_start)
         MNIST_model.fit(x_train, y_train,
                   batch_size=MNIST_batch_size,
                   epochs=MNIST_epochs,
                   verbose=1,
                   validation_data=(x_test, y_test))
-        MNIST_end = time.time()
         
-        MNIST_process = psutil.Process(os.getpid())
-        print("after memory_percent",MNIST_process.memory_percent())
-        print(psutil.cpu_percent(percpu=True))
-        
-        
-        print("end", MNIST_end)
-        
-        print("Time Elapsed")
-        print(str(datetime.timedelta(seconds= MNIST_end - MNIST_start)))
-        print(MNIST_end - MNIST_start)
-        
-        
+        EndMonitoring(start)
         #Model performance evaluation
         MNIST_Test_loss , MNIST_acc = MNIST_model.evaluate(x_test, y_test, verbose=1)
         print("Test Loss", MNIST_Test_loss)
         print("Test Accuracy", MNIST_acc)
-        
         #MNIST_predicted_classes = MNIST_model.predict_classes(MNIST_x_test)
-         
-    elif Dataset is cifar10:
+
+def RunCIFAR10():
         x_train, y_train, x_test, y_test = loadData()
         x_train = x_train.astype('float32')
         x_test = x_test.astype('float32')
@@ -143,32 +142,14 @@ def main():
                       optimizer='adam',
                       metrics=['accuracy'])
         
-         
-        CIFAR_current_process = psutil.Process()
-        print("before memory_percent", CIFAR_current_process.memory_percent())
-        print(psutil.cpu_percent(percpu=True))
+        start = StartMonitoring()
         
-        CIFAR_start = time.time()
-        print("start",CIFAR_start)
-               
         CIFAR_model.fit(x_train, y_train,
                       batch_size=CIFAR_batch_size,
                       epochs=CIFAR_epochs,
                       validation_data=(x_test, y_test),
                       shuffle=True)
-        
-        CIFAR_end = time.time()
-        
-        CIFAR_process = psutil.Process(os.getpid())
-        print("after memory_percent",CIFAR_process.memory_percent())
-        print(psutil.cpu_percent(percpu=True))
-        print("end", CIFAR_end)
-        
-        
-        print("Time Elapsed")
-        print(str(datetime.timedelta(seconds= CIFAR_end - CIFAR_start)))
-        print(CIFAR_end - CIFAR_start)
-        
+        EndMonitoring(start)
         # Save the model
         if not os.path.isdir(CIFAR_save_dir):
             os.makedirs(CIFAR_save_dir)
@@ -181,8 +162,13 @@ def main():
         print('Test loss:', CIFAR_scores[0])
         print('Test accuracy:', CIFAR_scores[1])
         
+def main():
+    if Dataset is mnist:
+        RunMNIST()
+    elif Dataset is cifar10:
+        RunCIFAR10()     
     else:
-        print("No Dataset Choosed")
+        print("Choose cifar10 or mnist")
 if __name__ == '__main__':
         main()
         

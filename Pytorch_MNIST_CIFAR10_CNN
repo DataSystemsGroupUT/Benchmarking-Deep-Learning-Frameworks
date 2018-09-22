@@ -21,6 +21,7 @@ import os
 import datetime
 
 MNIST_img_rows, MNIST_img_cols = 28, 28
+Dataset = "cifar10"
 
 def MNISTargs():
       # Training settings
@@ -53,7 +54,6 @@ def MNISTargs():
 
 def CIFAR10args():
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    start_epoch = 0  
     epochs= 12
     parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
     parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
@@ -266,8 +266,13 @@ def RunMNIST():
 
 
 def main():
-    #RunMNIST()
-    RunCIFAR10()
+    if Dataset is "mnist":
+        RunMNIST()
+    elif Dataset is "cifar10":
+        RunCIFAR10()     
+    else:
+        print("Choose cifar10 or mnist")
+
 
 if __name__ == '__main__':
     main()

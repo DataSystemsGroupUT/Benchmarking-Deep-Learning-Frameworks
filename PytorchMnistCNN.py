@@ -40,7 +40,8 @@ class ConvNet(nn.Module):
         x = x.view(x.size(0), -1)
         x= F.relu(self.fc1(x))        
         x = F.dropout(x,0.5)
-        x = F.softmax(x)
+        x = self.fc2(x)
+        x = F.log_softmax(x)
         return x
 
 def train(args, model, device, train_loader, optimizer, epoch):

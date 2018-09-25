@@ -17,7 +17,24 @@ import psutil
 import datetime
 import gzip
 
-def load_dataset():
+
+def initParameters(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay):
+    global Dataset    
+    global pbatchSize
+    global pnumClasses
+    global pEpochs
+    global pLearningRate
+    global pMomentum
+    global pWeightDecay
+    Dataset = dataset
+    pbatchSize = batchSize
+    pnumClasses = numClasses
+    pEpochs = epochs
+    pLearningRate = learningRate
+    pMomentum = momentum
+    pWeightDecay = weightDecay
+    
+def loadData():
     from urllib.request import urlretrieve
 
     def download(filename, source='http://yann.lecun.com/exdb/mnist/'):
@@ -56,40 +73,76 @@ def load_dataset():
 
     # We just return all the arrays in order, as expected in main().
     # (It doesn't matter how we do this as long as we can read them again.)
+    print(X_train.shape)
     return X_train, y_train, X_val, y_val, X_test, y_test
 
 
-def build_cnn(input_var=None):
-    network = lasagne.layers.InputLayer(shape=(None, 1, 28, 28),
-                                        input_var=input_var)
 
-    network = lasagne.layers.Conv2DLayer(
-            network, num_filters=32, filter_size=(3, 3),
-            nonlinearity=lasagne.nonlinearities.rectify,
-            W=lasagne.init.GlorotUniform())
-
-    network = lasagne.layers.Conv2DLayer(
-            network, num_filters=64, filter_size=(3, 3),
-            nonlinearity=lasagne.nonlinearities.rectify)
+def StartMonitoring():
+        process = psutil.Process(os.getpid())
+        print("Before memory_percent", process.memory_percent())
+        print(psutil.cpu_percent(percpu=True))
+        global start
+        start = time.time()
     
+    
+def EndMonitoring():
+        end = time.time()        
+        process = psutil.Process(os.getpid())
+        print("after memory_percent",process.memory_percent())
+        print(psutil.cpu_percent(percpu=True))
+        print("Time Elapsed")
+        print(str(datetime.timedelta(seconds= end - start)))
+        print(end - start)  
+        
+        
+        
+def model(input_var=None):
+    network = lasagne.layers.InputLayer(shape=(None, 1, 28, 28),input_var=input_var)
+    network = lasagne.layers.Conv2DLayer(network, num_filters=32, filter_size=(3, 3),nonlinearity=lasagne.nonlinearities.rectify,W=lasagne.init.GlorotUniform())
+    network = lasagne.layers.Conv2DLayer(network, num_filters=64, filter_size=(3, 3),nonlinearity=lasagne.nonlinearities.rectify)
     network = lasagne.layers.MaxPool2DLayer(network, pool_size=(2, 2))
-
-    network = lasagne.layers.DenseLayer(
-            lasagne.layers.dropout(network, p=.25),
-            num_units=128,
-            nonlinearity=lasagne.nonlinearities.rectify)
-    
+    network = lasagne.layers.DenseLayer(lasagne.layers.dropout(network, p=.25),num_units=128,nonlinearity=lasagne.nonlinearities.rectify)
     network = lasagne.layers.FlattenLayer(network)
-
     # And, finally, the 10-unit output layer with 50% dropout on its inputs:
-    network = lasagne.layers.DenseLayer(
-            lasagne.layers.dropout(network, p=.5),
-            num_units=10,
-            nonlinearity=lasagne.nonlinearities.softmax)
-
+    network = lasagne.layers.DenseLayer(lasagne.layers.dropout(network, p=.5),num_units=10,nonlinearity=lasagne.nonlinearities.softmax)
     return network
 
 
+def evalModel(X_test,y_test,batchSize,val_fn):
+    #Calculate and print the test error:
+    test_err = 0
+    test_acc = 0
+    test_batches = 0
+    for batch in iterate_minibatches(X_test, y_test, batchSize, shuffle=False):
+        inputs, targets = batch
+        err, acc = val_fn(inputs, targets)
+        test_err += err
+        test_acc += acc
+        test_batches += 1
+        
+    print("Final results:")
+    print("  test loss:\t\t\t{:.6f}".format(test_err / test_batches))
+    print("  test accuracy:\t\t{:.2f} %".format(test_acc / test_batches * 100))
+    
+def validateModel(X_val,y_val,batchSize,epoch,train_batches,train_err,start_time,val_fn):
+    #pass over the validation data:
+    val_err = 0
+    val_acc = 0
+    val_batches = 0
+    for batch in iterate_minibatches(X_val, y_val, batchSize, shuffle=False):
+        inputs, targets = batch
+        err, acc = val_fn(inputs, targets)
+        val_err += err
+        val_acc += acc
+        val_batches += 1
+    
+    # print the results of the epoch:
+    print("Epoch {} of {} took {:.3f}s".format(epoch + 1, pEpochs, time.time() - start_time))
+    print("  training loss:\t\t{:.6f}".format(train_err / train_batches))
+    print("  validation loss:\t\t{:.6f}".format(val_err / val_batches))
+    print("  validation accuracy:\t\t{:.2f} %".format(val_acc / val_batches * 100))
+        
 def iterate_minibatches(inputs, targets, batchsize, shuffle=False):
     assert len(inputs) == len(targets)
     if shuffle:
@@ -103,9 +156,11 @@ def iterate_minibatches(inputs, targets, batchsize, shuffle=False):
         yield inputs[excerpt], targets[excerpt]
 
 
-def main(model='cnn', num_epochs=12):
-    batchsize= 128
-    X_train, y_train, X_val, y_val, X_test, y_test = load_dataset()
+def RunMNIST(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay):
+    
+    initParameters(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)
+    
+    X_train, y_train, X_val, y_val, X_test, y_test = loadData()
 
     # prepare Theano variables for inputs and targets
     input_var = T.tensor4('inputs')
@@ -114,98 +169,64 @@ def main(model='cnn', num_epochs=12):
     # build neural network model
     print("Building model and compiling functions...")
     
-    network = build_cnn(input_var)
+    net = model(input_var)
     
    
     # cross-entropy loss for training loss:
-    prediction = lasagne.layers.get_output(network)
+    prediction = lasagne.layers.get_output(net)
     loss = lasagne.objectives.categorical_crossentropy(prediction, target_var)
     loss = loss.mean()
 
 
     # SGD
-    params = lasagne.layers.get_all_params(network, trainable=True)
-    updates = lasagne.updates.momentum(
-            loss, params, learning_rate=0.01, momentum=0.5)
-
-    test_prediction = lasagne.layers.get_output(network, deterministic=True)
-    test_loss = lasagne.objectives.categorical_crossentropy(test_prediction,
-                                                            target_var)
+    params = lasagne.layers.get_all_params(net, trainable=True)
+    updates = lasagne.updates.momentum(loss, params, learningRate, momentum)
+    
+    test_prediction = lasagne.layers.get_output(net, deterministic=True)
+    test_loss = lasagne.objectives.categorical_crossentropy(test_prediction, target_var)
     test_loss = test_loss.mean()
-    # classification accuracy:
-    test_acc = T.mean(T.eq(T.argmax(test_prediction, axis=1), target_var),
-                      dtype=theano.config.floatX)
-
-    # training loss
+    
+    
+     # training loss
     train_fn = theano.function([input_var, target_var], loss, updates=updates)
+    # test accuracy:
+    test_acc = T.mean(T.eq(T.argmax(test_prediction, axis=1), target_var),dtype=theano.config.floatX)
+
 
     #validation loss and accuracy
     val_fn = theano.function([input_var, target_var], [test_loss, test_acc])
 
-
-    print("Start training...") 
-    process = psutil.Process(os.getpid())
-    print("before memory_percent",process.memory_percent())
-    print(psutil.cpu_percent(percpu=True))
-
-    start = time.time()
-    print("start",start)
-    
-    
     # loop over all epochs:
-    for epoch in range(num_epochs):
+    for epoch in range(epochs):
         # In each epoch, we do a full pass over the training data:
         train_err = 0
         train_batches = 0
         start_time = time.time()
-        for batch in iterate_minibatches(X_train, y_train, batchsize, shuffle=True):
+        for batch in iterate_minibatches(X_train, y_train, batchSize, shuffle=True):
             inputs, targets = batch
             train_err += train_fn(inputs, targets)
             train_batches += 1
+            print('bylef: '," - ",train_batches," - ",train_err,)
 
-        #pass over the validation data:
-        val_err = 0
-        val_acc = 0
-        val_batches = 0
-        for batch in iterate_minibatches(X_val, y_val, batchsize, shuffle=False):
-            inputs, targets = batch
-            err, acc = val_fn(inputs, targets)
-            val_err += err
-            val_acc += acc
-            val_batches += 1
-
-        # print the results of the epoch:
-        print("Epoch {} of {} took {:.3f}s".format(
-            epoch + 1, num_epochs, time.time() - start_time))
-        print("  training loss:\t\t{:.6f}".format(train_err / train_batches))
-        print("  validation loss:\t\t{:.6f}".format(val_err / val_batches))
-        print("  validation accuracy:\t\t{:.2f} %".format(
-            val_acc / val_batches * 100))
-       
-    end = time.time()
-    print("end", end)
-    print("Time Elapsed")
-    print(end - start)
-    print(str(datetime.timedelta(seconds= end - start)))    
-    process = psutil.Process(os.getpid())
-    print("after memory_percent",process.memory_percent())
-    print(psutil.cpu_percent(percpu=True))  
+        validateModel(X_val,y_val,batchSize,epoch,train_batches,train_err,start_time,val_fn)
         
-    
-    #Calculate and print the test error:
-    test_err = 0
-    test_acc = 0
-    test_batches = 0
-    for batch in iterate_minibatches(X_test, y_test, batchsize, shuffle=False):
-        inputs, targets = batch
-        err, acc = val_fn(inputs, targets)
-        test_err += err
-        test_acc += acc
-        test_batches += 1
-    print("Final results:")
-    print("  test loss:\t\t\t{:.6f}".format(test_err / test_batches))
-    print("  test accuracy:\t\t{:.2f} %".format(
-        test_acc / test_batches * 100))
+    evalModel(X_test,y_test,batchSize,val_fn)
 
+
+
+def runModel(dataset,batchSize=128,numClasses=10,epochs=12,learningRate=0.01,momentum=0.5,weightDecay=1e-6):
+    if dataset is "mnist":
+        RunMNIST(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)
+    elif dataset is "cifar10":
+        pass   
+    else:
+        print("Choose cifar10 or mnist")
+
+def main():
+    StartMonitoring()
+    runModel("mnist",epochs=1,batchSize=500)
+    EndMonitoring()
+    
+    
 if __name__ == '__main__':
-        main()
+    main()

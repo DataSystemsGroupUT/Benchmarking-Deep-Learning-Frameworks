@@ -140,8 +140,10 @@ def RunMNIST(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDec
     MNIST_sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.5, nesterov=True)
     MNIST_model.compile(loss='categorical_crossentropy',optimizer=MNIST_sgd, metrics=['accuracy'])
     #Training the model
+    memT,cpuT = YN.StartLogger("Keras","MNIST")
     MNIST_model.fit(x_train, y_train,batch_size=batchSize,epochs=epochs,verbose=1,validation_data=(x_test, y_test))
     #Model performance evaluation
+    YN.EndLogger(memT,cpuT)
     evaluateModel(MNIST_model,x_test, y_test, verbose=1)
     #MNIST_predicted_classes = MNIST_model.predict_classes(MNIST_x_test)
 
@@ -149,8 +151,10 @@ def RunCIFAR10(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightD
     initParameters(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)
     x_train, y_train, x_test, y_test = loadData()
     CIFAR_model = model_CIFAR10()
-    CIFAR_model.compile(loss='categorical_crossentropy', optimizer='adam',metrics=['accuracy'])   
+    CIFAR_model.compile(loss='categorical_crossentropy', optimizer='adam',metrics=['accuracy'])
+    memT,cpuT = YN.StartLogger("Keras","CIFAR10")
     CIFAR_model.fit(x_train, y_train,batch_size=batchSize,epochs=epochs,validation_data=(x_test, y_test),shuffle=True)
+    YN.EndLogger(memT,cpuT)
     # Score trained model.
     evaluateModel(CIFAR_model,x_test, y_test, verbose=1)
        
@@ -165,16 +169,12 @@ def runModel(dataset,batchSize=128,numClasses=10,epochs=12,learningRate=0.01,mom
         print("Choose cifar10 or mnist")
 
 def main():
-    memT,cpuT = YN.StartLogger("Keras","MNIST")
-    runModel(mnist,epochs=1)
-    YN.EndLogger(memT,cpuT)
-    #runModel(cifar10,epochs=1)
+    
+    
+    runModel(mnist,epochs=3)
+
+    #runModel(cifar10,epochs=3)
   
 if __name__ == '__main__':
         main()
-        
-        
-        
-        
-        
         

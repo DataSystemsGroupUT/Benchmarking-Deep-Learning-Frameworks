@@ -1,22 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Sep 27 15:47:13 2018
+Created on Sun Sep  2 15:33:56 2018
 
 @author: nesma
-"""
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# =============================================================================
+# """
 
 from __future__ import print_function
 import keras
-from keras.datasets import cifar10,mnist,cifar100
+from keras.datasets import cifar10,mnist
 from keras import Sequential,optimizers
 from keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Activation, Flatten
 import LoggerYN as YN
 import numpy as np
-import utilsYN as uYN
 import scipy.io as sio
+import utilsYN as uYN
 
 def initParameters(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay):
     global Dataset    
@@ -42,21 +41,16 @@ def NormalizeData(x_train,x_test):
     # convert class vectors to binary class matrices
     # The result is a vector with a length equal to the number of categories.
 def CategorizeData(y_train,y_test,pnumClasses):
-    y_train = keras.utils.to_categorical(y_train, 100)
-    y_test = keras.utils.to_categorical(y_test, 100)
+    y_train = keras.utils.to_categorical(y_train, pnumClasses)
+    y_test = keras.utils.to_categorical(y_test, pnumClasses)
     return y_train, y_test
     
 def loadData():
     global Dataset
     if Dataset == "mnist":
         Dataset = mnist
-    elif Dataset == "cifar10":
-        Dataset = cifar10
-    elif Dataset == "cifar100":
-        Dataset = cifar100
     else:
-        pass
-        
+        Dataset = cifar10
     (x_train, y_train), (x_test, y_test) = Dataset.load_data()
     
     global imgRows
@@ -77,7 +71,7 @@ def loadData():
     x_train = x_train.astype('float32')
     x_test = x_test.astype('float32')
     x_train, x_test = NormalizeData(x_train, x_test)
-    y_train, y_test = CategorizeData(y_train,y_test,100)
+    y_train, y_test = CategorizeData(y_train,y_test,pnumClasses)
     inputShape = (imgRows, imgCols, imgRGB_Dimensions)
     return x_train, y_train, x_test, y_test
 
@@ -173,37 +167,6 @@ def model_CIFAR10():
     CIFAR_model.add(Activation('softmax'))    
     return CIFAR_model
 
-
-def model_CIFAR100():
-    CIFAR100_model = Sequential()
-    CIFAR100_model.add(Conv2D(128, (3, 3), padding='same',input_shape=inputShape))
-    CIFAR100_model.add(Activation('relu'))
-    CIFAR100_model.add(Conv2D(128, (3, 3)))
-    CIFAR100_model.add(Activation('relu'))
-    CIFAR100_model.add(MaxPooling2D(pool_size=(2, 2)))
-    CIFAR100_model.add(Dropout(0.1))
-    CIFAR100_model.add(Conv2D(256, (3, 3), padding='same'))
-    CIFAR100_model.add(Activation('relu'))
-    CIFAR100_model.add(Conv2D(256, (3, 3)))
-    CIFAR100_model.add(Activation('relu'))
-    CIFAR100_model.add(MaxPooling2D(pool_size=(2, 2)))
-    CIFAR100_model.add(Dropout(0.25))
-
-    CIFAR100_model.add(Conv2D(512, (3, 3), padding='same'))
-    CIFAR100_model.add(Activation('relu'))
-    CIFAR100_model.add(Conv2D(512, (3, 3)))
-    CIFAR100_model.add(Activation('relu'))
-    CIFAR100_model.add(MaxPooling2D(pool_size=(2, 2)))
-    CIFAR100_model.add(Dropout(0.5))
-    CIFAR100_model.add(Flatten())
-    CIFAR100_model.add(Dense(1024))
-    CIFAR100_model.add(Activation('relu'))
-    CIFAR100_model.add(Dropout(0.5))
-    CIFAR100_model.add(Dense(100))
-    CIFAR100_model.add(Activation('softmax'))
-    return CIFAR100_model
-    
-    
 def model_SVHC():
     model_SVHC = Sequential()
     model_SVHC.add(Conv2D(48, (5, 5), padding='same',input_shape=inputShape))
@@ -300,18 +263,6 @@ def RunCIFAR10(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightD
     YN.EndLogger(memT,cpuT)
     # Score trained model.
     evaluateModel(CIFAR_model,x_test, y_test, verbose=1)
-    
-def RunCIFAR100(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay):
-    initParameters(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)
-    x_train, y_train, x_test, y_test = loadData()
-    CIFAR_model = model_CIFAR100()
-    CIFAR_sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.5, nesterov=True)
-    CIFAR_model.compile(loss='categorical_crossentropy',optimizer=CIFAR_sgd, metrics=['accuracy'])
-    memT,cpuT = YN.StartLogger("Keras","CIFAR10")
-    CIFAR_model.fit(x_train, y_train,batch_size=batchSize,epochs=epochs,validation_data=(x_test, y_test),shuffle=True)
-    YN.EndLogger(memT,cpuT)
-    # Score trained model.
-    evaluateModel(CIFAR_model,x_test, y_test, verbose=1)
 
 def RunSVHC(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay):
     initParameters(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)
@@ -330,9 +281,7 @@ def runModel(dataset,batchSize=128,numClasses=10,epochs=12,learningRate=0.01,mom
     if dataset is "mnist":
         RunMNIST(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)
     elif dataset is "cifar10":
-        RunCIFAR10(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay) 
-    elif dataset is "cifar100":
-        RunCIFAR100(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay) 
+        RunCIFAR10(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)   
     elif dataset is "SVHC":
         RunSVHC(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)
     else:

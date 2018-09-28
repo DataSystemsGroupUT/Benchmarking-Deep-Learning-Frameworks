@@ -1,0 +1,167 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Sep  22  19:21:20 2018
+@author: nesma
+"""
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import torch.nn.functional as F
+#import torch.backends.cudnn as cudnn
+import torchvision.transforms as transforms
+from torchvision import datasets
+
+def initParameters(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay):
+    global Dataset    
+    global pbatchSize
+    global pnumClasses
+    global pEpochs
+    global pLearningRate
+    global pMomentum
+    global pWeightDecay
+    Dataset = dataset
+    pbatchSize = batchSize
+    pnumClasses = numClasses
+    pEpochs = epochs
+    pLearningRate = learningRate
+    pMomentum = momentum
+    pWeightDecay = weightDecay
+     
+   
+    device = "cpu" 
+    
+    kwargs = {}
+    
+    return device,kwargs
+
+
+
+def CIFAR100_Loader(kwargs):
+    
+    CIFAR100_train_loader = torch.utils.data.DataLoader(
+        datasets.CIFAR100(root='./data', train=True, download=True,
+                       transform=transforms.Compose([
+                        transforms.ToTensor(),
+                        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+                        ])), batch_size=pbatchSize, shuffle=True, **kwargs)
+    CIFAR100_test_loader = torch.utils.data.DataLoader(
+        datasets.CIFAR100(root='./data', train=False, transform=transforms.Compose([
+                           transforms.ToTensor(),
+                           transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+                       ])), shuffle=True, **kwargs)
+    CIFAR100_classes = (
+    'beaver', 'dolphin', 'otter', 'seal', 'whale',
+    'aquarium fish', 'flatfish', 'ray', 'shark', 'trout',
+    'orchids', 'poppies', 'roses', 'sunflowers', 'tulips',
+    'bottles', 'bowls', 'cans', 'cups', 'plates',
+    'apples', 'mushrooms', 'oranges', 'pears', 'sweet peppers',
+    'clock', 'computer keyboard', 'lamp', 'telephone', 'television',
+    'bed', 'chair', 'couch', 'table', 'wardrobe',
+    'bee', 'beetle', 'butterfly', 'caterpillar', 'cockroach',
+    'bear', 'leopard', 'lion', 'tiger', 'wolf',
+    'bridge', 'castle', 'house', 'road', 'skyscraper',
+    'cloud', 'forest', 'mountain', 'plain', 'sea',
+    'camel', 'cattle', 'chimpanzee', 'elephant', 'kangaroo',
+    'fox', 'porcupine', 'possum', 'raccoon', 'skunk',
+    'crab', 'lobster', 'snail', 'spider', 'worm',
+    'baby', 'boy', 'girl', 'man', 'woman',
+    'crocodile', 'dinosaur', 'lizard', 'snake', 'turtle',
+    'hamster', 'mouse', 'rabbit', 'shrew', 'squirrel',
+    'maple', 'oak', 'palm', 'pine', 'willow',
+    'bicycle', 'bus', 'motorcycle', 'pickup truck', 'train',
+    'lawn-mower', 'rocket', 'streetcar', 'tank', 'tractor')
+
+    return CIFAR100_train_loader, CIFAR100_test_loader,CIFAR100_classes
+
+def CIFAR100_train(epoch,criterion,optimizer,CIFAR100_trainloader,device,CIFAR100_model):
+    print('\nEpoch: %d' % epoch)
+    CIFAR100_model.train()
+    for batch_idx, (data, targets) in enumerate(CIFAR100_trainloader):
+        data, targets = data.to(device), targets.to(device)
+        optimizer.zero_grad()
+        input = CIFAR100_model(data)
+        print(targets.shape)
+        loss = F.cross_entropy(input, targets)
+        loss.backward()
+        optimizer.step()
+        if batch_idx % 10 == 0:
+            print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+                epoch, batch_idx * len(data), len(CIFAR100_trainloader.dataset),
+                100. * batch_idx / len(CIFAR100_trainloader), loss.item()))
+    
+def CIFAR100_test(epoch, CIFAR100_testloader,CIFAR100_model, device,criterion):
+    CIFAR100_model.eval()
+    test_loss = 0
+    correct = 0
+    total=0
+    with torch.no_grad():
+        for batch_idx, (inputs, targets) in enumerate(CIFAR100_testloader):
+            inputs, targets = inputs.to(device), targets.to(device)
+            input = CIFAR100_model(inputs)
+            test_loss = criterion(input, targets)
+            test_loss += test_loss.item()
+            _, predicted = input.max(1)
+            total += targets.size(0)
+            correct += predicted.eq(targets).sum().item()  
+    
+    test_loss /= len(CIFAR100_testloader.dataset)
+    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
+        test_loss, correct, len(CIFAR100_testloader.dataset),
+        100. * correct / len(CIFAR100_testloader.dataset)))
+      
+
+
+class CIFAR100_ConvNet(nn.Module):
+    def __init__(self):
+        super(CIFAR100_ConvNet, self).__init__()
+        self.conv1 = nn.Conv2d( 3, 32,  kernel_size=(3))
+        self.conv2 = nn.Conv2d( 32, 64, kernel_size=(3, 3))
+        self.fc1 = nn.Linear(12544, 128)
+        self.fc2 = nn.Linear(128, 100)
+            
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))  
+        x = F.max_pool2d(x , kernel_size= (2, 2))
+        x = F.dropout(x, 0.25)
+        #Flatten  
+        x = x.view(x.size(0), -1)
+        x= F.relu(self.fc1(x))    
+        x = F.dropout(x,0.5)
+        x = self.fc2(x)
+        y = F.log_softmax(x)
+        return y
+    
+def RunCIFAR100(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay):
+    device,kwargs = initParameters(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)
+    CIFAR100_trainloader, CIFAR100_testloader, CIFAR100_classes = CIFAR100_Loader(kwargs)
+    CIFAR100_model = CIFAR100_ConvNet()
+    CIFAR100_model = CIFAR100_model.to(device)
+  
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.SGD(CIFAR100_model.parameters(), lr=pLearningRate, momentum=pMomentum, weight_decay=pWeightDecay)
+    
+    for epoch in range(1, pEpochs+1):
+        CIFAR100_train(epoch,criterion,optimizer,CIFAR100_trainloader,device,CIFAR100_model)
+        CIFAR100_test(epoch,CIFAR100_testloader,CIFAR100_model,device,criterion)
+    
+
+
+
+        
+def runModel(dataset,batchSize=128,numClasses=100,epochs=12,learningRate=0.01,momentum=0.5,weightDecay=1e-6):
+   if dataset is "cifar100":
+        RunCIFAR100(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)     
+   else:
+        print("Choose cifar100 or mnist")
+
+def main():
+    #runModel("mnist",epochs=1)
+    runModel("cifar100",epochs=1)
+
+
+if __name__ == '__main__':
+    main()

@@ -9,7 +9,7 @@ Created on Sun Sep  2 15:33:56 2018
 
 from __future__ import print_function
 import keras
-from keras.datasets import cifar10,mnist
+from keras.datasets import cifar10,mnist,cifar100
 from keras import Sequential,optimizers
 from keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Activation, Flatten
 import LoggerYN as YN
@@ -40,15 +40,19 @@ def NormalizeData(x_train,x_test):
     
     # convert class vectors to binary class matrices
     # The result is a vector with a length equal to the number of categories.
-def CategorizeData(y_train,y_test,pnumClasses):
+def CategorizeData(dataset,y_train,y_test,pnumClasses):
     y_train = keras.utils.to_categorical(y_train, pnumClasses)
     y_test = keras.utils.to_categorical(y_test, pnumClasses)
+    
+    
     return y_train, y_test
     
 def loadData():
     global Dataset
     if Dataset == "mnist":
         Dataset = mnist
+    elif Dataset == "cifar100":
+        Dataset = cifar100
     else:
         Dataset = cifar10
     (x_train, y_train), (x_test, y_test) = Dataset.load_data()
@@ -76,7 +80,7 @@ def loadData():
     return x_train, y_train, x_test, y_test
 
 
-def loadDataSVHC(extra=False):
+def loadDataSVHC(fname = 'C:/Users/Youssef/Downloads/Compressed/%s_32x32.mat',extra=False):
     """Load the SVHN dataset (optionally with extra images)
     Args:
         extra (bool, optional): load extra training data
@@ -91,8 +95,6 @@ def loadDataSVHC(extra=False):
 
     data = uYN.Dataset()
     data.classes = np.arange(10)
-
-    fname = 'C:/Users/Youssef/Downloads/Compressed/%s_32x32.mat'
 
     X, y = load_mat(fname % 'train')
     data.train_images = X
@@ -161,6 +163,38 @@ def model_CIFAR10():
     CIFAR_model.add(Dropout(0.25))
     CIFAR_model.add(Flatten())
     CIFAR_model.add(Dense(512))
+    CIFAR_model.add(Activation('relu'))
+    CIFAR_model.add(Dropout(0.5))
+    CIFAR_model.add(Dense(pnumClasses))
+    CIFAR_model.add(Activation('softmax'))    
+    return CIFAR_model
+
+def model_CIFAR100():
+    CIFAR_model = Sequential()
+    CIFAR_model.add(Conv2D(128, (3, 3), padding='same',input_shape=inputShape))
+    CIFAR_model.add(Activation('relu'))
+    CIFAR_model.add(Conv2D(128, (3, 3)))
+    CIFAR_model.add(Activation('relu'))
+    CIFAR_model.add(MaxPooling2D(pool_size=(2, 2)))
+    CIFAR_model.add(Dropout(0.1))
+    
+    CIFAR_model.add(Conv2D(256, (3, 3), padding='same'))
+    CIFAR_model.add(Activation('relu'))
+    CIFAR_model.add(Conv2D(256, (3, 3)))
+    CIFAR_model.add(Activation('relu'))
+    CIFAR_model.add(MaxPooling2D(pool_size=(2, 2)))
+    CIFAR_model.add(Dropout(0.25))
+    
+    CIFAR_model.add(Conv2D(512, (3, 3), padding='same'))
+    CIFAR_model.add(Activation('relu'))
+    CIFAR_model.add(Conv2D(512, (3, 3)))
+    CIFAR_model.add(Activation('relu'))
+    CIFAR_model.add(MaxPooling2D(pool_size=(2, 2)))
+    CIFAR_model.add(Dropout(0.5))
+    
+    
+    CIFAR_model.add(Flatten())
+    CIFAR_model.add(Dense(1024))
     CIFAR_model.add(Activation('relu'))
     CIFAR_model.add(Dropout(0.5))
     CIFAR_model.add(Dense(pnumClasses))
@@ -242,7 +276,7 @@ def RunMNIST(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDec
     initParameters(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)
     x_train, y_train, x_test, y_test = loadData()
     MNIST_model = model_MNIST()
-    MNIST_sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.5, nesterov=True)
+    MNIST_sgd = optimizers.SGD(lr=learningRate, decay=weightDecay, momentum=momentum, nesterov=True)
     MNIST_model.compile(loss='categorical_crossentropy',optimizer=MNIST_sgd, metrics=['accuracy'])
     #Training the model
     memT,cpuT = YN.StartLogger("Keras","MNIST")
@@ -256,7 +290,7 @@ def RunCIFAR10(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightD
     initParameters(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)
     x_train, y_train, x_test, y_test = loadData()
     CIFAR_model = model_CIFAR10()
-    CIFAR_sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.5, nesterov=True)
+    CIFAR_sgd = optimizers.SGD(lr=learningRate, decay=weightDecay, momentum=momentum, nesterov=True)
     CIFAR_model.compile(loss='categorical_crossentropy',optimizer=CIFAR_sgd, metrics=['accuracy'])
     memT,cpuT = YN.StartLogger("Keras","CIFAR10")
     CIFAR_model.fit(x_train, y_train,batch_size=batchSize,epochs=epochs,validation_data=(x_test, y_test),shuffle=True)
@@ -264,11 +298,23 @@ def RunCIFAR10(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightD
     # Score trained model.
     evaluateModel(CIFAR_model,x_test, y_test, verbose=1)
 
-def RunSVHC(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay):
+def RunCIFAR100(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay):
     initParameters(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)
-    x_train, y_train, x_test, y_test = loadDataSVHC()
+    x_train, y_train, x_test, y_test = loadData()
+    CIFAR_model = model_CIFAR100()
+    CIFAR_sgd = optimizers.SGD(lr=learningRate, decay=weightDecay, momentum=momentum, nesterov=True)
+    CIFAR_model.compile(loss='categorical_crossentropy',optimizer=CIFAR_sgd, metrics=['accuracy'])
+    memT,cpuT = YN.StartLogger("Keras","CIFAR100")
+    CIFAR_model.fit(x_train, y_train,batch_size=batchSize,epochs=epochs,validation_data=(x_test, y_test),shuffle=True)
+    YN.EndLogger(memT,cpuT)
+    # Score trained model.
+    evaluateModel(CIFAR_model,x_test, y_test, verbose=1)
+
+def RunSVHC(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay,fname):
+    initParameters(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)
+    x_train, y_train, x_test, y_test = loadDataSVHC(fname)
     SVHC_model = model_SVHC()
-    SVHC_sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.5, nesterov=True)
+    SVHC_sgd = optimizers.SGD(lr=learningRate, decay=weightDecay, momentum=momentum, nesterov=True)
     SVHC_model.compile(loss='categorical_crossentropy',optimizer=SVHC_sgd, metrics=['accuracy'])
     memT,cpuT = YN.StartLogger("Keras","SVHC")
     SVHC_model.fit(x_train, y_train,batch_size=batchSize,epochs=epochs,validation_data=(x_test, y_test),shuffle=True)
@@ -281,9 +327,12 @@ def runModel(dataset,batchSize=128,numClasses=10,epochs=12,learningRate=0.01,mom
     if dataset is "mnist":
         RunMNIST(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)
     elif dataset is "cifar10":
-        RunCIFAR10(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)   
+        RunCIFAR10(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)
+    elif dataset is "cifar100":
+        RunCIFAR100(dataset,batchSize,numClasses=100,epochs,learningRate,momentum,weightDecay)
     elif dataset is "SVHC":
-        RunSVHC(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)
+        fname = "./%s_32x32.mat"
+        RunSVHC(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay,fname)
     else:
         print("Choose cifar10 or mnist or svhc")
 

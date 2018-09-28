@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Sep  2 15:33:56 2018
-
 @author: nesma
 # =============================================================================
 # """
@@ -40,7 +39,7 @@ def NormalizeData(x_train,x_test):
     
     # convert class vectors to binary class matrices
     # The result is a vector with a length equal to the number of categories.
-def CategorizeData(dataset,y_train,y_test,pnumClasses):
+def CategorizeData(y_train,y_test,pnumClasses):
     y_train = keras.utils.to_categorical(y_train, pnumClasses)
     y_test = keras.utils.to_categorical(y_test, pnumClasses)
     
@@ -329,7 +328,7 @@ def runModel(dataset,batchSize=128,numClasses=10,epochs=12,learningRate=0.01,mom
     elif dataset is "cifar10":
         RunCIFAR10(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)
     elif dataset is "cifar100":
-        RunCIFAR100(dataset,batchSize,numClasses=100,epochs,learningRate,momentum,weightDecay)
+        RunCIFAR100(dataset,batchSize,numClasses=100,epochs=epochs,learningRate=learningRate,momentum=momentum,weightDecay=weightDecay)
     elif dataset is "SVHC":
         fname = "./%s_32x32.mat"
         RunSVHC(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay,fname)
@@ -339,8 +338,9 @@ def runModel(dataset,batchSize=128,numClasses=10,epochs=12,learningRate=0.01,mom
 def main():
     
     
-    runModel("mnist",epochs=3)
+#    runModel("mnist",epochs=3)
     #runModel("cifar10",epochs=3)
+    runModel("cifar100",epochs=3)
     #runModel("SVHC",epochs=1)
   
 if __name__ == '__main__':

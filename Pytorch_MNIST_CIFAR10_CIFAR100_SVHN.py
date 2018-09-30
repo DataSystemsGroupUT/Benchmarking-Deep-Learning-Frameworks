@@ -598,14 +598,14 @@ def runModel(dataset,batchSize=128,numClasses=10,epochs=12,learningRate=0.01,mom
     elif dataset is "cifar100":
         RunCIFAR100(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)   
     elif dataset is "SVHC":
-        fname = 'C:/Users/Youssef/Downloads/Compressed/%s_32x32.mat'
+        fname = 'SVHN/%s_32x32.mat'
         RunSVHC(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay,fname)    
     else:
         print("Choose cifar10 or mnist")
 
 def main():
     
-    runModel("cifar100",epochs=1)
+    runModel("cifar100",epochs=15)
     #runModel("SVHC",epochs=5)
     #runModel("mnist",epochs=1)
     #runModel("cifar10",epochs=1)

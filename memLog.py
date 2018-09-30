@@ -13,7 +13,7 @@ if __name__ == '__main__':
 		rNumber = int(time.time())
 		frameworkName = sys.argv[2]
 		datasetName = sys.argv[3]
-		filename = "Result_Memory/"+str(frameworkName)+"_"+str(datasetName)+"_"+str(rNumber)+".txt"
+		filename = "Results/Memory/"+str(frameworkName)+"_"+str(datasetName)+"_"+str(rNumber)+".txt"
 		print("Memory Logger Start\n")
 		print("Result File: " + filename)
 		

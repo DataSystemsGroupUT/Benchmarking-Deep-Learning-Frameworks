@@ -7,7 +7,7 @@ import string
 def StartMonitoring(index,pid,frameworkName,datasetName):
         process = psutil.Process(int(pid))
         rNumber = int(time.time())
-        filename = "Result_Cpu/"+str(frameworkName)+"_"+str(datasetName)+"_"+str(rNumber)+".txt"
+        filename = "Results/Cpu/"+str(frameworkName)+"_"+str(datasetName)+"_"+str(rNumber)+".txt"
         print("CPU Logger Start\n")
         print("Result File: " + filename)
         

@@ -22,8 +22,8 @@ import matplotlib.pyplot as plt
 from chainer.datasets import mnist
 from chainer import Sequential
 
-max_epoch = 10
-batchsize = 128
+max_epoch = 3
+batchsize = 1024
 
     
     
@@ -37,26 +37,36 @@ class MyNetwork(Chain):
     def __init__(self):
         super(MyNetwork, self).__init__()
         with self.init_scope():
-            self.conv1 = L.Convolution2D(
-                    1,32,3,3)
-            self.conv2 = L.Convolution2D(
-                    in_channels=32, out_channels=64, ksize=3, stride=3)
-            self.fc1 = L.Linear(None, 64)
+            self.conv1 = L.Convolution2D(1,32,ksize=3)
+            self.conv2 = L.Convolution2D(32, 64, ksize=3)
+            self.fc1 = L.Linear(None,64)
             self.fc2 = L.Linear(64, 10)
-
+      
     def __call__(self, x):
         
+        #print(x.shape)
         x = x.reshape(-1,1,28,28)
+        #print(x.shape)
         x = F.relu(self.conv1(x))
-        #x = F.relu(self.conv2(x))  
-       # x = F.max_pool2d(x , kernel_size= (2, 2))
+        #print(x.shape)
+        x = F.relu(self.conv2(x))  
+        #print(x.shape)
+        x = F.max_pooling_2d(x , ksize= (2, 2))
+        #print(x.shape)
         x = F.dropout(x, 0.25)
-        #Flatten  
-        #x = x.view(x.size(0), -1)
-        x= F.relu(self.fc1(x))        
+        #print(x.shape)
+        print(x.shape)
+        #x = F.flatten(x).reshape(batchsize,-1)
+        x = F.flatten(x).reshape(-1,9216)
+        print(x.shape)
+
+        print("***",x.shape)
+        x= F.relu(self.fc1(x))
+        #print("====",x.shape)        
         x = F.dropout(x,0.5)
         x = F.softmax(x)
         return x
+    
     
 model = MyNetwork()
 
@@ -79,7 +89,13 @@ while train_iter.epoch < max_epoch:
     train_batch = train_iter.next()
     
     image_train, target_train = concat_examples(train_batch, gpu_id)
-
+    
+    
+#    while(image_train.shape[0] != batchsize):
+#        train_batch = train_iter.next()
+#        image_train, target_train = concat_examples(train_batch, gpu_id)
+#    
+    print("----" + str(image_train.shape) + "--" + str(train_iter.epoch))
     # Calculate the prediction of the network
     prediction_train = model(image_train)
 
@@ -107,6 +123,7 @@ while train_iter.epoch < max_epoch:
             test_batch = test_iter.next()
             image_test, target_test = concat_examples(test_batch, gpu_id)
 
+            
             # Forward the test data
             prediction_test = model(image_test)
 
@@ -163,4 +180,3 @@ y = y.data
 pred_label = y.argmax(axis=1)
 
 print('predicted label:', pred_label[0])
-

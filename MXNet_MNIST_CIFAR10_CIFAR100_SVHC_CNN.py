@@ -75,7 +75,7 @@ def loadData():
     else:
         pass
 
-def loadDataSVHC(fname,extra=False):
+def loadDataSVHN(fname,extra=False):
     """Load the SVHN dataset (optionally with extra images)
     Args:
         extra (bool, optional): load extra training data
@@ -199,63 +199,63 @@ def modelCIFAR100():
         #softmax takes 10
     return  net
 
-def model_SVHC():
+def model_SVHN():
     
-    model_SVHC = gluon.nn.Sequential()
-    with model_SVHC.name_scope():
-        model_SVHC.add(gluon.nn.Conv2D(channels=48, kernel_size=5,strides=1,padding=2, activation='relu'))
-        model_SVHC.add(gluon.nn.MaxPool2D(pool_size=2, strides=2))
-        model_SVHC.add(gluon.nn.Dropout(0.2))
+    model_SVHN = gluon.nn.Sequential()
+    with model_SVHN.name_scope():
+        model_SVHN.add(gluon.nn.Conv2D(channels=48, kernel_size=5,strides=1,padding=2, activation='relu'))
+        model_SVHN.add(gluon.nn.MaxPool2D(pool_size=2, strides=2))
+        model_SVHN.add(gluon.nn.Dropout(0.2))
    
     
-        model_SVHC.add(gluon.nn.Conv2D(channels=64, kernel_size=5,strides=1,padding=2))
-        model_SVHC.add(gluon.nn.BatchNorm(axis=1, center=True, scale=True))
-        model_SVHC.add(gluon.nn.Activation(activation='relu'))
-        model_SVHC.add(gluon.nn.MaxPool2D(pool_size=2, strides=1))
-        model_SVHC.add(gluon.nn.Dropout(0.2))
+        model_SVHN.add(gluon.nn.Conv2D(channels=64, kernel_size=5,strides=1,padding=2))
+        model_SVHN.add(gluon.nn.BatchNorm(axis=1, center=True, scale=True))
+        model_SVHN.add(gluon.nn.Activation(activation='relu'))
+        model_SVHN.add(gluon.nn.MaxPool2D(pool_size=2, strides=1))
+        model_SVHN.add(gluon.nn.Dropout(0.2))
         
-        model_SVHC.add(gluon.nn.Conv2D(channels=128, kernel_size=5,strides=1,padding=2))
-        model_SVHC.add(gluon.nn.BatchNorm(axis=1, center=True, scale=True))
-        model_SVHC.add(gluon.nn.Activation(activation='relu'))
-        model_SVHC.add(gluon.nn.MaxPool2D(pool_size=2, strides=2))
-        model_SVHC.add(gluon.nn.Dropout(0.2))
+        model_SVHN.add(gluon.nn.Conv2D(channels=128, kernel_size=5,strides=1,padding=2))
+        model_SVHN.add(gluon.nn.BatchNorm(axis=1, center=True, scale=True))
+        model_SVHN.add(gluon.nn.Activation(activation='relu'))
+        model_SVHN.add(gluon.nn.MaxPool2D(pool_size=2, strides=2))
+        model_SVHN.add(gluon.nn.Dropout(0.2))
             
-        model_SVHC.add(gluon.nn.Conv2D(channels=160, kernel_size=5,strides=1,padding=2))
-        model_SVHC.add(gluon.nn.BatchNorm(axis=1, center=True, scale=True))
-        model_SVHC.add(gluon.nn.Activation(activation='relu'))
-        model_SVHC.add(gluon.nn.MaxPool2D(pool_size=2, strides=1))
-        model_SVHC.add(gluon.nn.Dropout(0.2))
+        model_SVHN.add(gluon.nn.Conv2D(channels=160, kernel_size=5,strides=1,padding=2))
+        model_SVHN.add(gluon.nn.BatchNorm(axis=1, center=True, scale=True))
+        model_SVHN.add(gluon.nn.Activation(activation='relu'))
+        model_SVHN.add(gluon.nn.MaxPool2D(pool_size=2, strides=1))
+        model_SVHN.add(gluon.nn.Dropout(0.2))
         
-        model_SVHC.add(gluon.nn.Conv2D(channels=192, kernel_size=5,strides=1,padding=2))
-        model_SVHC.add(gluon.nn.BatchNorm(axis=1, center=True, scale=True))
-        model_SVHC.add(gluon.nn.Activation(activation='relu'))
-        model_SVHC.add(gluon.nn.MaxPool2D(pool_size=2, strides=2))
-        model_SVHC.add(gluon.nn.Dropout(0.2))
+        model_SVHN.add(gluon.nn.Conv2D(channels=192, kernel_size=5,strides=1,padding=2))
+        model_SVHN.add(gluon.nn.BatchNorm(axis=1, center=True, scale=True))
+        model_SVHN.add(gluon.nn.Activation(activation='relu'))
+        model_SVHN.add(gluon.nn.MaxPool2D(pool_size=2, strides=2))
+        model_SVHN.add(gluon.nn.Dropout(0.2))
         
-        model_SVHC.add(gluon.nn.Conv2D(channels=192, kernel_size=5,strides=1,padding=2))
-        model_SVHC.add(gluon.nn.BatchNorm(axis=1, center=True, scale=True))
-        model_SVHC.add(gluon.nn.Activation(activation='relu'))
-        model_SVHC.add(gluon.nn.MaxPool2D(pool_size=2, strides=1))
-        model_SVHC.add(gluon.nn.Dropout(0.2))
+        model_SVHN.add(gluon.nn.Conv2D(channels=192, kernel_size=5,strides=1,padding=2))
+        model_SVHN.add(gluon.nn.BatchNorm(axis=1, center=True, scale=True))
+        model_SVHN.add(gluon.nn.Activation(activation='relu'))
+        model_SVHN.add(gluon.nn.MaxPool2D(pool_size=2, strides=1))
+        model_SVHN.add(gluon.nn.Dropout(0.2))
         
-        model_SVHC.add(gluon.nn.Conv2D(channels=192, kernel_size=3,strides=1,padding=2))
-        model_SVHC.add(gluon.nn.BatchNorm(axis=1, center=True, scale=True))
-        model_SVHC.add(gluon.nn.Activation(activation='relu'))
-        model_SVHC.add(gluon.nn.MaxPool2D(pool_size=2, strides=2))
-        model_SVHC.add(gluon.nn.Dropout(0.2))
+        model_SVHN.add(gluon.nn.Conv2D(channels=192, kernel_size=3,strides=1,padding=2))
+        model_SVHN.add(gluon.nn.BatchNorm(axis=1, center=True, scale=True))
+        model_SVHN.add(gluon.nn.Activation(activation='relu'))
+        model_SVHN.add(gluon.nn.MaxPool2D(pool_size=2, strides=2))
+        model_SVHN.add(gluon.nn.Dropout(0.2))
         
-        model_SVHC.add(gluon.nn.Conv2D(channels=192, kernel_size=5,strides=1,padding=2))
-        model_SVHC.add(gluon.nn.BatchNorm(axis=1, center=True, scale=True))
-        model_SVHC.add(gluon.nn.Activation(activation='relu'))
-        model_SVHC.add(gluon.nn.MaxPool2D(pool_size=2, strides=1))
-        model_SVHC.add(gluon.nn.Dropout(0.2))
+        model_SVHN.add(gluon.nn.Conv2D(channels=192, kernel_size=5,strides=1,padding=2))
+        model_SVHN.add(gluon.nn.BatchNorm(axis=1, center=True, scale=True))
+        model_SVHN.add(gluon.nn.Activation(activation='relu'))
+        model_SVHN.add(gluon.nn.MaxPool2D(pool_size=2, strides=1))
+        model_SVHN.add(gluon.nn.Dropout(0.2))
         
-        model_SVHC.add(gluon.nn.Flatten())
-        model_SVHC.add(gluon.nn.Dense(3072, activation="relu"))
-        model_SVHC.add(gluon.nn.Dense(3072, activation="relu"))
+        model_SVHN.add(gluon.nn.Flatten())
+        model_SVHN.add(gluon.nn.Dense(3072, activation="relu"))
+        model_SVHN.add(gluon.nn.Dense(3072, activation="relu"))
       
-        model_SVHC.add(gluon.nn.Dense(pnumClasses))
-    return model_SVHC        
+        model_SVHN.add(gluon.nn.Dense(pnumClasses))
+    return model_SVHN        
 
 def evaluate_accuracy(data_iterator, net):
     acc = mx.metric.Accuracy()
@@ -267,7 +267,7 @@ def evaluate_accuracy(data_iterator, net):
         acc.update(preds=predictions, labels=label)
     return acc.get()[1]
 
-def evaluate_accuracySVHC(X,Y,batchSize, net):
+def evaluate_accuracySVHN(X,Y,batchSize, net):
     acc = mx.metric.Accuracy()
     i =0 
     print(X.shape,Y.shape,batchSize)
@@ -394,21 +394,21 @@ def RunCIFAR100(dataset,batchSize,numClasses,epochs,learningRate,momentum,weight
     memT,cpuT = YN.StartLogger("MXNET","CIFAR100")
 
         
-def RunSVHC(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay,fname):
+def RunSVHN(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay,fname):
     
     initParameters(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)
-    train_data_x,train_data_y, test_data_x,test_data_y = loadDataSVHC(fname)
+    train_data_x,train_data_y, test_data_x,test_data_y = loadDataSVHN(fname)
    
     #Get Model
-    net = model_SVHC()
+    net = model_SVHN()
     net.collect_params().initialize(mx.init.Xavier(magnitude=2.24), ctx=myDevice)
     
     #Optimizer settings
     trainer = gluon.Trainer(net.collect_params(), 'sgd', {'learning_rate': learningRate, 'momentum': momentum,'wd': weightDecay})
     
 
-    print("SVHC Training Started.....")
-    memT,cpuT = YN.StartLogger("MXNET","SVHC")
+    print("SVHN Training Started.....")
+    memT,cpuT = YN.StartLogger("MXNET","SVHN")
     for e in range(pEpochs):
         i=0
         for data, label in zip(batch(train_data_x, batchSize),batch(train_data_y, batchSize)):
@@ -425,11 +425,11 @@ def RunSVHC(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDeca
             i=i+1
         print("Calculating metrics.....")
         #print("Yousef ---> ",train_data_x.shape,train_data_y.shape,batchSize)
-        train_accuracy = evaluate_accuracySVHC(train_data_x,train_data_y,batchSize, net)
-        test_accuracy = evaluate_accuracySVHC(test_data_x,test_data_y,batchSize, net)
+        train_accuracy = evaluate_accuracySVHN(train_data_x,train_data_y,batchSize, net)
+        test_accuracy = evaluate_accuracySVHN(test_data_x,test_data_y,batchSize, net)
         print("Epoch %s. Loss: %s, Train_acc %s, Test_acc %s" % (e+1, curr_loss, train_accuracy, test_accuracy))     
-    print("SVHC Training Finished.....")
-    memT,cpuT = YN.StartLogger("MXNET","SVHC")
+    print("SVHN Training Finished.....")
+    memT,cpuT = YN.StartLogger("MXNET","SVHN")
 
 def runModel(dataset,batchSize=128,numClasses=10,epochs=12,learningRate=0.01,momentum=0.5,weightDecay=1e-6):
     if dataset is "mnist":
@@ -438,10 +438,9 @@ def runModel(dataset,batchSize=128,numClasses=10,epochs=12,learningRate=0.01,mom
         RunCIFAR10(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)
     elif dataset is "cifar100":
         RunCIFAR100(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)
-    elif dataset is "SVHC":
-        #fname = "./%s_32x32.mat"
-        fname = 'C:/Users/Youssef/Downloads/Compressed/%s_32x32.mat'
-        RunSVHC(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay,fname) 
+    elif dataset is "SVHN":
+        fname = 'SVHN/%s_32x32.mat'
+        RunSVHN(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay,fname) 
     else:
         print("Choose cifar10 or mnist")
 
@@ -449,7 +448,7 @@ def main():
     
     #runModel("mnist",epochs=1)
     #runModel("cifar10",epochs=1)
-    runModel("SVHC",epochs=15)
+    runModel("SVHN",epochs=15)
     #runModel("cifar100",epochs=3)
     
     

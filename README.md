@@ -3,7 +3,9 @@
 ### Frameworks included:
 #### Keras
 #### MXNET
-#### Thano
+#### Theano
+#### Tensorflow
+#### Pytorch
 
 ### Datasets Included:
 #### MNIST

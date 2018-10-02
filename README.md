@@ -3,4 +3,10 @@
 ### Frameworks included:
 #### Keras
 #### MXNET
-#### 
+#### Thano
+
+### Datasets Included:
+#### MNIST
+#### CIFAR10
+#### CIFAR100
+#### SVHN

@@ -6,6 +6,7 @@
 #### Theano
 #### Tensorflow
 #### Pytorch
+#### Chainer
 
 ### Datasets Included:
 #### MNIST

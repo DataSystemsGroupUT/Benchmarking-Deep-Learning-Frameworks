@@ -938,7 +938,7 @@ def RunMNIST(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDec
         
     # train with 10 epochs
     sess = tf.Session()
-    
+    memT,cpuT = YN.StartLogger("Tensorflow","MNIST")    
     try:
         with tf.device("/cpu:0") as dev:
             sess.run(tf.global_variables_initializer())
@@ -950,18 +950,18 @@ def RunMNIST(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDec
         print("no gpu found, please use Google Cloud if you want GPU acceleration")
     
     
-    
+
     # view net model result on train  and validation set
     print('Training')
     net.run(sess, mean_loss, X_train, y_train, 1, batchSize)
     print('Validation')
     net.run(sess, mean_loss, X_val, y_val, 1, batchSize)
-    
+
     
     # check result on test
     print('Test')
     net.run(sess, mean_loss, X_test, y_test, 1, batchSize)
-
+    YN.EndLogger(memT,cpuT)
 
 ####################################################################
 
@@ -1012,7 +1012,7 @@ def RunCIFAR10(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightD
         
     # train with 10 epochs
     sess = tf.Session()
-    
+    memT,cpuT = YN.StartLogger("Tensorflow","CIFAR10")    
     try:
         with tf.device("/cpu:0") as dev:
             sess.run(tf.global_variables_initializer())
@@ -1024,18 +1024,18 @@ def RunCIFAR10(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightD
         print("no gpu found, please use Google Cloud if you want GPU acceleration")
     
     
-    
+
     # view net model result on train  and validation set
     print('Training')
     net.run(sess, mean_loss, X_train, y_train, 1, batchSize)
     print('Validation')
     net.run(sess, mean_loss, X_val, y_val, 1, batchSize)
-    
+
     
     # check result on test
     print('Test')
     net.run(sess, mean_loss, X_test, y_test, 1, batchSize)
-
+    YN.EndLogger(memT,cpuT)
 
 
 def RunCIFAR100(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay):
@@ -1080,7 +1080,7 @@ def RunCIFAR100(dataset,batchSize,numClasses,epochs,learningRate,momentum,weight
         
     # train with 10 epochs
     sess = tf.Session()
-    
+    memT,cpuT = YN.StartLogger("Tensorflow","CIFAR100")
     try:
         with tf.device("/cpu:0") as dev:
             sess.run(tf.global_variables_initializer())
@@ -1092,18 +1092,18 @@ def RunCIFAR100(dataset,batchSize,numClasses,epochs,learningRate,momentum,weight
         print("no gpu found, please use Google Cloud if you want GPU acceleration")
     
     
-    
+
     # view net model result on train  and validation set
     print('Training')
     net.run(sess, mean_loss, X_train, y_train, 1, batchSize)
     print('Validation')
     net.run(sess, mean_loss, X_val, y_val, 1, batchSize)
-    
+
     
     # check result on test
     print('Test')
     net.run(sess, mean_loss, X_test, y_test, 1, batchSize)
-    
+    YN.EndLogger(memT,cpuT)   
 
 
 
@@ -1149,7 +1149,7 @@ def RunSVHN(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDeca
         
     # train with 10 epochs
     sess = tf.Session()
-    
+    memT,cpuT = YN.StartLogger("Tensorflow","SVHN")
     try:
         with tf.device("/cpu:0") as dev:
             sess.run(tf.global_variables_initializer())
@@ -1167,12 +1167,10 @@ def RunSVHN(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDeca
     net.run(sess, mean_loss, X_train, y_train, 1, batchSize)
     print('Validation')
     net.run(sess, mean_loss, X_val, y_val, 1, batchSize)
-    
-    
     # check result on test
     print('Test')
     net.run(sess, mean_loss, X_test, y_test, 1, batchSize)
-
+    YN.EndLogger(memT,cpuT)
 
 def runModel(dataset,batchSize=128,numClasses=10,epochs=12,learningRate=0.01,momentum=0.5,weightDecay=1e-6):
     if dataset is "mnist":
@@ -1191,8 +1189,8 @@ def main():
     
 #    runModel("mnist",epochs=1)
 #    runModel("cifar10",epochs=3)
-#    runModel("SVHN",epochs=1)
-    runModel("cifar100",epochs=3)
+    runModel("SVHN",epochs=1)
+#    runModel("cifar100",epochs=3)
     
     
   

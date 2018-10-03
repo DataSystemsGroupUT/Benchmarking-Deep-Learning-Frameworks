@@ -101,14 +101,21 @@ class CifarNet():
     def __init__(self):
        
         # To ReLu (?x16x16x32) -> MaxPool (?x16x16x32) -> affine (8192)
-        self.Wconv1 = tf.get_variable("Wconv1", shape=[5, 5, 3, 32])
+        self.Wconv1 = tf.get_variable("Wconv1", shape=[3, 3, 3, 32])
         self.bconv1 = tf.get_variable("bconv1", shape=[32])
         # (32-5)/1 + 1 = 28
         # 28x28x64 = 50176
-        self.Wconv2 = tf.get_variable("Wconv2", shape=[5, 5, 32, 64])
-        self.bconv2 = tf.get_variable("bconv2", shape=[64])
+        self.Wconv2 = tf.get_variable("Wconv2", shape=[3, 3, 32, 32])
+        self.bconv2 = tf.get_variable("bconv2", shape=[32])
+        
+        self.Wconv3 = tf.get_variable("Wconv3", shape=[3, 3, 32, 64])
+        self.bconv3 = tf.get_variable("bconv3", shape=[64])
+        
+        self.Wconv4 = tf.get_variable("Wconv4", shape=[3, 3, 64, 64])
+        self.bconv4 = tf.get_variable("bconv4", shape=[64])
+        
         # affine layer with 1024
-        self.W1 = tf.get_variable("W1", shape=[3136, 1024])
+        self.W1 = tf.get_variable("W1", shape=[4096, 1024])
         self.b1 = tf.get_variable("b1", shape=[1024])
         # affine layer with 10
         self.W2 = tf.get_variable("W2", shape=[1024, 10])
@@ -117,32 +124,37 @@ class CifarNet():
     def forward(self, X, y, is_training):
         
         conv1 = tf.nn.conv2d(X, self.Wconv1, strides=[1, 1, 1, 1], padding='SAME') + self.bconv1
-       
-        # ReLU Activation Layer
         relu1 = tf.nn.relu(conv1)
-        
+        print(X.shape)
+        print(relu1.shape)
         # Conv
-        conv2 = tf.nn.conv2d(relu1, self.Wconv2, strides=[1, 2, 2, 1], padding='VALID') + self.bconv2
-        
-        # ReLU Activation Layer
+        conv2 = tf.nn.conv2d(relu1, self.Wconv2, strides=[1, 1, 1, 1], padding='SAME') + self.bconv2
         relu2 = tf.nn.relu(conv2)
+        print(conv2.shape)
         
-        # 2x2 Max Pooling layer with a stride of 2
-        maxpool = tf.layers.max_pooling2d(relu2, pool_size=(2,2), strides=2)
+        maxpool = tf.layers.max_pooling2d(relu2, pool_size=(2,2),strides=2)
+        drop1 = tf.layers.dropout(inputs=maxpool, training=is_training)
         
-        maxpool_flat = tf.reshape(maxpool,[-1,3136])
-        # Spatial Batch Normalization Layer (trainable parameters, with scale and centering)
-        bn1 = tf.layers.batch_normalization(inputs=maxpool_flat, center=True, scale=True, training=is_training)
+        print(drop1.shape)
+        conv3 = tf.nn.conv2d(drop1, self.Wconv3, strides=[1, 1, 1, 1], padding='SAME') + self.bconv3
+        relu3 = tf.nn.relu(conv3)
+        
+        conv4 = tf.nn.conv2d(relu3, self.Wconv4, strides=[1, 1, 1, 1], padding='SAME') + self.bconv4
+        relu4 = tf.nn.relu(conv4)
+        
+        maxpool2 = tf.layers.max_pooling2d(relu4, pool_size=(2,2),strides=2)
+        drop2 = tf.layers.dropout(inputs=maxpool2, training=is_training)
+        
+        print(drop2.shape)
+        maxpool_flat = tf.reshape(drop2,[-1,4096])
+#        # Spatial Batch Normalization Layer (trainable parameters, with scale and centering)
+#        bn1 = tf.layers.batch_normalization(inputs=maxpool_flat, center=True, scale=True, training=is_training)
         # Affine layer with 1024 output units
-        affine1 = tf.matmul(bn1, self.W1) + self.b1
+        affine1 = tf.matmul(maxpool_flat, self.W1) + self.b1
         
-        # vanilla batch normalization
-        affine1_flat = tf.reshape(affine1,[-1,1024])
-        
-        bn2 = tf.layers.batch_normalization(inputs=affine1, center=True, scale=True, training=is_training)
-        
+     
         # ReLU Activation Layer
-        relu2 = tf.nn.relu(bn2)
+        relu2 = tf.nn.relu(affine1)
         
         # dropout
         drop1 = tf.layers.dropout(inputs=relu2, training=is_training)
@@ -150,8 +162,7 @@ class CifarNet():
         # Affine layer from 1024 input units to 10 outputs
         affine2 = tf.matmul(drop1, self.W2) + self.b2
         
-        # vanilla batch normalization
-        affine2_flat = tf.reshape(affine2,[-1,3136])
+   
         
         self.predict = tf.layers.batch_normalization(inputs=affine2, center=True, scale=True, training=is_training)
         

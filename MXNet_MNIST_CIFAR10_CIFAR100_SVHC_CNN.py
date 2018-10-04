@@ -14,7 +14,7 @@ from mxnet import nd, autograd, gluon
 
 
 mx.random.seed(1)
-myDevice= mx.gpu() if mx.test_utils.list_gpus() else mx.cpu()
+myDevice= mx.cpu() #mx.gpu() if mx.test_utils.list_gpus() else mx.cpu()
 
 
 def initParameters(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay):
@@ -270,7 +270,7 @@ def evaluate_accuracy(data_iterator, net):
 def evaluate_accuracySVHN(X,Y,batchSize, net):
     acc = mx.metric.Accuracy()
     i =0 
-    print(X.shape,Y.shape,batchSize)
+    #print(X.shape,Y.shape,batchSize)
     for data, label in zip(batch(X, batchSize),batch(Y, batchSize)):
         data = data.as_in_context(myDevice)
         label = label.as_in_context(myDevice)
@@ -292,7 +292,7 @@ def RunMNIST(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDec
     
     train_data, test_data = loadData()
     
-    print(type(train_data))
+    #print(type(train_data))
     #we didn’t have to include the softmax layer 
     #because MXNet’s has an efficient function that simultaneously computes 
     #the softmax activation and cross-entropy loss
@@ -446,9 +446,9 @@ def runModel(dataset,batchSize=128,numClasses=10,epochs=12,learningRate=0.01,mom
 
 def main():
     
-    #runModel("mnist",epochs=1)
+    runModel("mnist",epochs=3)
     #runModel("cifar10",epochs=1)
-    runModel("SVHN",epochs=15)
+    #runModel("SVHN",epochs=15)
     #runModel("cifar100",epochs=3)
     
     

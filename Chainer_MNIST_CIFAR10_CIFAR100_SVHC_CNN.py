@@ -264,7 +264,7 @@ def RunMNIST(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDec
     
     initParameters(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDecay)
     
-    train_iter, test_iter = loadData(batchSize)
+    train_iter, test_iter = loadData(dataset,batchSize)
     
     model = modelMNIST()
 
@@ -594,10 +594,10 @@ def runModel(dataset,batchSize=128,numClasses=10,epochs=12,learningRate=0.01,mom
         print("Choose cifar10 or mnist")
 
 def main():
-    runModel("SVHN",epochs=3)
+#    runModel("SVHN",epochs=3)
 #    runModel("cifar100",epochs=3)
 #    runModel("cifar10",epochs=3)
-#    runModel("mnist",epochs=3)
+    runModel("mnist",epochs=3)
     
     
 if __name__ == '__main__':

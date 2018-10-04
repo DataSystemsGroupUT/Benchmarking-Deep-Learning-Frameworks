@@ -289,8 +289,8 @@ def RunMNIST(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDec
         
         image_train, target_train = concat_examples(train_batch, gpu_id)
         
-        
-        print("Epoch: "+str(train_iter.epoch) , " Batch (",batchId,")")
+        if ((batchId % batchSize) == 0) or (batchId == 1):
+            print("Epoch: "+str(train_iter.epoch) , " Batch (",batchId,")")
         # Calculate the prediction of the network
         prediction_train = model(image_train)
     
@@ -371,8 +371,8 @@ def RunCIFAR10(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightD
         
         image_train, target_train = concat_examples(train_batch, gpu_id)
         
-        
-        print("Epoch: "+str(train_iter.epoch) , " Batch (",batchId,")")
+        if ((batchId % batchSize) == 0) or (batchId == 1):
+            print("Epoch: "+str(train_iter.epoch) , " Batch (",batchId,")")
         # Calculate the prediction of the network
         prediction_train = model(image_train)
     
@@ -450,8 +450,8 @@ def RunCIFAR100(dataset,batchSize,numClasses,epochs,learningRate,momentum,weight
         
         image_train, target_train = concat_examples(train_batch, gpu_id)
         
-        
-        print("Epoch: "+str(train_iter.epoch) , " Batch (",batchId,")")
+        if ((batchId % batchSize) == 0) or (batchId == 1):    
+            print("Epoch: "+str(train_iter.epoch) , " Batch (",batchId,")")
         # Calculate the prediction of the network
         prediction_train = model(image_train)
     
@@ -529,8 +529,8 @@ def RunSVHN(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDeca
         
         image_train, target_train = concat_examples(train_batch, gpu_id)
         
-        
-        print("Epoch: "+str(train_iter.epoch) , " Batch (",batchId,")")
+        if ((batchId % batchSize) == 0) or (batchId == 1):
+            print("Epoch: "+str(train_iter.epoch) , " Batch (",batchId,")")
         # Calculate the prediction of the network
         prediction_train = model(image_train)
     

@@ -308,6 +308,8 @@ def RunMNIST(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDec
     memT,cpuT = YN.StartLogger("MXNET","MNIST")
     for e in range(pEpochs):
         for i, (data, label) in list(enumerate(train_data)):
+            if ((i % batchSize) == 0) or (i == 0):
+                print("Epoch: "+str(e) , " Batch (",i,")")        
             data = data.as_in_context(myDevice)
             label = label.as_in_context(myDevice)
             with autograd.record():
@@ -343,6 +345,8 @@ def RunCIFAR10(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightD
     memT,cpuT = YN.StartLogger("MXNET","CIFAR10")
     for e in range(pEpochs):
         for i, (data, label) in enumerate(train_data):
+            if ((i % batchSize) == 0) or (i == 0):
+                print("Epoch: "+str(e) , " Batch (",i,")")     
             data = data.as_in_context(myDevice)
             label = label.as_in_context(myDevice)
             with autograd.record():
@@ -378,7 +382,8 @@ def RunCIFAR100(dataset,batchSize,numClasses,epochs,learningRate,momentum,weight
     memT,cpuT = YN.StartLogger("MXNET","CIFAR100")
     for e in range(pEpochs):
         for i, (data, label) in enumerate(train_data):
-            print("\r........ " + str(i) + " ........" )
+            if ((i % batchSize) == 0) or (i == 0):
+                print("Epoch: "+str(e) , " Batch (",i,")")         
             data = data.as_in_context(myDevice)
             label = label.as_in_context(myDevice)
             with autograd.record():
@@ -412,7 +417,8 @@ def RunSVHN(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDeca
     for e in range(pEpochs):
         i=0
         for data, label in zip(batch(train_data_x, batchSize),batch(train_data_y, batchSize)):
-            #print("Batch: " + str(i+1))
+            if ((i % batchSize) == 0) or (i == 0):
+                print("Epoch: "+str(e) , " Batch (",i,")") 
             data = data.as_in_context(myDevice)
             label = label.as_in_context(myDevice)
             data = np.transpose(data,(0,3,1,2))

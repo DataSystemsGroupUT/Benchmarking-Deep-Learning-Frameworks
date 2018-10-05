@@ -83,7 +83,8 @@ def MNIST_train(model, device, train_loader, optimizer, epoch):
         loss = F.cross_entropy(input, target)
         loss.backward()
         optimizer.step()
-        if batch_idx % 10 == 0:
+        global pbatchSize
+        if batch_idx % pbatchSize == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
                 100. * batch_idx / len(train_loader), loss.item()))
@@ -173,7 +174,8 @@ def CIFAR10_train(epoch,criterion,optimizer,CIFAR10_trainloader,device,CIFAR10_m
         loss = F.cross_entropy(input, targets)
         loss.backward()
         optimizer.step()
-        if batch_idx % 10 == 0:
+        global pbatchSize
+        if batch_idx % pbatchSize == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(CIFAR10_trainloader.dataset),
                 100. * batch_idx / len(CIFAR10_trainloader), loss.item()))
@@ -290,7 +292,8 @@ def CIFAR100_train(epoch,criterion,optimizer,CIFAR100_trainloader,device,CIFAR10
         loss = F.cross_entropy(input, targets)
         loss.backward()
         optimizer.step()
-        if batch_idx % 10 == 0:
+        global pbatchSize
+        if batch_idx % pbatchSize == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(CIFAR100_trainloader.dataset),
                 100. * batch_idx / len(CIFAR100_trainloader), loss.item()))
@@ -451,7 +454,8 @@ def SVHC_train(epoch,criterion,optimizer,SVHC_trainloader,device,SVHC_model,dsSi
         loss = F.cross_entropy(input, label.long())
         loss.backward()
         optimizer.step()
-        if batch_idx % 10 == 0:
+        global pbatchSize
+        if batch_idx % pbatchSize == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), dsSize,
                 100. * batch_idx * len(data) / dsSize, loss.item()))
@@ -605,9 +609,9 @@ def runModel(dataset,batchSize=128,numClasses=10,epochs=12,learningRate=0.01,mom
 
 def main():
     
-    runModel("cifar100",epochs=15)
+    #runModel("cifar100",epochs=15)
     #runModel("SVHC",epochs=5)
-    #runModel("mnist",epochs=1)
+    runModel("mnist",epochs=1)
     #runModel("cifar10",epochs=1)
 
 

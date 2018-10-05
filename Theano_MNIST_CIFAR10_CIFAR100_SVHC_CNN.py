@@ -359,8 +359,9 @@ def RunMNIST(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDec
         for batch in iterate_minibatches(X_train, y_train, batchSize, shuffle=True):
             inputs, targets = batch
             train_err += train_fn(inputs, targets)
+            if train_batches % batchSize == 0:
+                print('Epoch(',epoch,') Batch(',train_batches+1,")",train_err,)
             train_batches += 1
-            print('Batch(',train_batches,")",train_err,)
         validateModel(X_train,y_train,batchSize,epoch,train_batches,train_err,val_fn)
     
     evalModel(X_test,y_test,batchSize,val_fn)
@@ -486,8 +487,9 @@ def RunSVHN(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightDeca
         for data, label in zip(batch(X_train, batchSize),batch(y_train, batchSize)):
             data = np.transpose(data,(0,3,1,2))
             train_err += train_fn(data, label)
+            if train_batches % batchSize == 0:
+                print('Epoch(',epoch,') Batch(',train_batches+1,")",train_err,)
             train_batches += 1
-            print('Batch(',train_batches,")",train_err,)
         validateModelSVHN(X_train,y_train,batchSize,epoch,train_batches,train_err,val_fn)
         
     evalModelSVHN(X_test,y_test,batchSize,val_fn)
@@ -574,8 +576,9 @@ def RunCIFAR10(dataset,batchSize,numClasses,epochs,learningRate,momentum,weightD
         for batch in iterate_minibatches(X_train, y_train, batchSize, shuffle=True):
             inputs, targets = batch
             train_err += train_fn(inputs, targets)
+            if train_batches % batchSize == 0:
+                print('Epoch(',epoch,') Batch(',train_batches+1,")",train_err,)
             train_batches += 1
-            print('Batch(',train_batches,")",train_err,)
 
         validateModel(X_train,y_train,batchSize,epoch,train_batches,train_err,val_fn)
     print("CIFAR10 Training Finished.....")
@@ -672,8 +675,9 @@ def RunCIFAR100(dataset,batchSize,numClasses,epochs,learningRate,momentum,weight
         for batch in iterate_minibatches(X_train, y_train, batchSize, shuffle=True):
             inputs, targets = batch
             train_err += train_fn(inputs, targets)
+            if train_batches % batchSize == 0:
+                print('Epoch(',epoch,') Batch(',train_batches+1,")",train_err,)
             train_batches += 1
-            print('Batch(',train_batches,")",train_err,)
         validateModel(X_train,y_train,batchSize,epoch,train_batches,train_err,val_fn)
     print("CIFAR100 Training Finished.....")
     memT,cpuT = YN.StartLogger("Theano","CIFAR100")           
@@ -697,10 +701,10 @@ def runModel(dataset,batchSize=128,numClasses=10,epochs=12,learningRate=0.01,mom
         
 def main():
     
-    runModel("SVHN",epochs=1)
+#    runModel("SVHN",epochs=1)
 #    runModel("cifar10",epochs=1)
 #    runModel("cifar100",epochs=1)    
-#    runModel("mnist",epochs=1)    
+    runModel("mnist",epochs=1)    
     
 if __name__ == '__main__':
     main()

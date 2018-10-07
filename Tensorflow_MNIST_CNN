@@ -96,7 +96,10 @@ def loadDataMNIST():
 
 
     
+#### MNISTNET
     
+
+### gasgdgasgd
 
 
 # define net
@@ -112,30 +115,38 @@ class MNISTNet():
         self.bconv2 = tf.get_variable("bconv2", shape=[64])
    
         # affine layer with 1024
-        self.W1 = tf.get_variable("W1", shape=[12544, 64])
-        self.b1 = tf.get_variable("b1", shape=[64])
+        self.W1 = tf.get_variable("W1", shape=[9216, 128])
+        self.b1 = tf.get_variable("b1", shape=[128])
         # affine layer with 10
-        self.W2 = tf.get_variable("W2", shape=[64, 10])
+        self.W2 = tf.get_variable("W2", shape=[128, 10])
         self.b2 = tf.get_variable("b2", shape=[10])        
         
     def forward(self, X, y, is_training):
-        conv1 = tf.nn.conv2d(X, self.Wconv1, strides=[1, 1, 1, 1], padding='SAME') + self.bconv1
+        conv1 = tf.nn.conv2d(X, self.Wconv1, strides=[1, 1, 1, 1], padding='VALID') + self.bconv1
         relu1 = tf.nn.relu(conv1)
-        print(X.shape)
-        print(relu1.shape)
+        print("Xshape ",X.shape)
+        print("conv1shape", conv1.shape)
+        print("relu1 shape", relu1.shape)
         # Conv
-        conv2 = tf.nn.conv2d(relu1, self.Wconv2, strides=[1, 1, 1, 1], padding='SAME') + self.bconv2
+        conv2 = tf.nn.conv2d(relu1, self.Wconv2, strides=[1, 1, 1, 1], padding='VALID') + self.bconv2
         relu2 = tf.nn.relu(conv2)
-        print(conv2.shape)
-        
-        maxpool = tf.layers.max_pooling2d(relu2, pool_size=(2,2),strides=2)
-        drop1 = tf.layers.dropout(inputs=maxpool, training=is_training)
-        print(drop1.shape)
+        print("conv2shape", conv2.shape)
+        print("relu2", relu2.shape)
 
-        maxpool_flat = tf.reshape(drop1,[-1,12544])
+        maxpool = tf.layers.max_pooling2d(relu2, pool_size=(2,2),strides=2)
+        drop1 = tf.layers.dropout(inputs=maxpool, training=is_training,rate=0.25)
+        print("maxpool1 shape", maxpool.shape)        
+
+        print("drop1 shape", drop1.shape)        
+        maxpool_flat = tf.reshape(drop1,[-1,9216])
 #        # Spatial Batch Normalization Layer (trainable parameters, with scale and centering)
 #        bn1 = tf.layers.batch_normalization(inputs=maxpool_flat, center=True, scale=True, training=is_training)
         # Affine layer with 1024 output units
+        
+        print("drop1 shape",drop1.shape)
+        print("w1 shape",self.W1.shape)
+        print("b1 shape",self.b1.shape)
+        
         affine1 = tf.matmul(maxpool_flat, self.W1) + self.b1
         
      
@@ -144,11 +155,13 @@ class MNISTNet():
         print(relu2.shape)
 
         # dropout
-        drop1 = tf.layers.dropout(inputs=relu2, training=is_training)
-        print(drop1.shape)
+        drop2 = tf.layers.dropout(inputs=relu2, training=is_training, rate = 0.5)
+        print("drop2 shape",drop2.shape)
+        print("w2 shape",self.W2.shape)
+        print("b2 shape",self.b2.shape)
 
         # Affine layer from 1024 input units to 10 outputs
-        affine2 = tf.matmul(drop1, self.W2) + self.b2
+        affine2 = tf.matmul(drop2, self.W2) + self.b2
         
    
         

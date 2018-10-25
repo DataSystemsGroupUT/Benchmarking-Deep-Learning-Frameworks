@@ -7,7 +7,7 @@
   5-[Theano](http://deeplearning.net/software/theano/) version 1.0.2 <br />
   6-[Mxnet](https://mxnet.apache.org/) version 1.3.0<br />
 
-## The Experiments comparing those frameworks over 4 datsets:
+## The Experiments comparing those frameworks over 4 datasets:
   1- [MNIST](http://yann.lecun.com/exdb/mnist/) <br />
   2- [CIFAR10](https://www.cs.toronto.edu/~kriz/cifar.html) <br />
   3- [CIFAR100](https://www.cs.toronto.edu/~kriz/cifar.html) <br />

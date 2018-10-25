@@ -18,7 +18,7 @@ There are two experiments one of them uses CPU and the other uses GPU.
 
 ## This repository is divided into 3 folders:
   1- CPU Experiment <br />
-      * It contain the CPU source code <br />
+     Markup :   * It contain the CPU source code <br />
       The Generated graphs <br />
        The logs of the experiment <br />
        <br/>

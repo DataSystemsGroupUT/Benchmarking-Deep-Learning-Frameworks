@@ -39,8 +39,8 @@ There are two experiments one of them uses CPU and the other uses GPU.
  2- Clone the project <br />
  3- For running the experiment over MNIST datset for Keras framework for example, you will find in CPU folder the source code, There is a file for each framework. <br />
  4- There is a method in the main function that is called runModel, this methods holds the name of the dataset and the number of       epochs needed for this run and also many other optional parameters including: 
-   Learning Rate=0.01
-   momentum=0.5
-   Weight Decay=1e-6
-   batch size = 128.
+     * Learning Rate=0.01
+     * momentum=0.5
+     * Weight Decay=1e-6
+     * batch size = 128.
  5- There are many optional parameters 

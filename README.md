@@ -32,7 +32,7 @@ There are two experiments one of them uses CPU and the other uses GPU.
 
   
  ## Experiment Logging:
-  there exist 3 files for logging the resources during the experiment: CPU log, GPU Log, memory Log.<br />
+  There exist 3 files for logging the resources during the experiment: CPU log, GPU Log, memory Log.<br />
   
 ## How to run? 
  1- Install the environment for each framework using the installation  guide <br />

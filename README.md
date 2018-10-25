@@ -29,7 +29,7 @@ There are two experiments one of them uses CPU and the other uses GPU.
     
  ### 3- Installation Guide <br />
     * It contains the required packages to be included for each environment.
-    * It's recommended to create different environmnet for each framework.
+    * It's recommended to create different environmnet for each framework using conda or virtualenvs
 
   
  ## Experiment Logging:

@@ -2,17 +2,17 @@
 ## The frameworks that are included in this benchmark are:
   1- [Keras](https://keras.io/)
 <br /> 
-  2-Chainer <br />
-  3-Tensorflow <br />
-  4-Pytorch <br />
-  5-Theano <br />
-  6-Mxnet <br />
+  2-[Chainer] (https://docs.chainer.org/en/stable/glance.html) <br />
+  3-[Tensorflow] (https://www.tensorflow.org/) <br />
+  4-[Pytorch] (https://pytorch.org/) <br />
+  5-[Theano]  (http://deeplearning.net/software/theano/) <br />
+  6-[Mxnet] (https://mxnet.apache.org/) <br />
 
 ## The Experiments comparing those frameworks over 4 datsets:
-  1- MNIST <br />
-  2- CIFAR10 <br />
-  3- CIFAR100 <br />
-  4- SVHN <br />
+  1- [MNIST] (http://yann.lecun.com/exdb/mnist/) <br />
+  2- [CIFAR10] (https://www.cs.toronto.edu/~kriz/cifar.html) <br />
+  3- [CIFAR100] (https://www.cs.toronto.edu/~kriz/cifar.html) <br />
+  4- [SVHN] (http://ufldl.stanford.edu/housenumbers/) <br />
 
 There are two experiments one of them uses CPU and the other uses GPU.
 

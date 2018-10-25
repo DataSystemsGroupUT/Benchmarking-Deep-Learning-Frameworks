@@ -1,12 +1,11 @@
 # Benchmarking-Deep-Learning-Frameworks
 ## The frameworks that are included in this benchmark are:
-  1- [Keras](https://keras.io/)
-<br /> 
-  2-[Chainer](https://docs.chainer.org/en/stable/glance.html) <br />
-  3-[Tensorflow](https://www.tensorflow.org/) <br />
-  4-[Pytorch](https://pytorch.org/) <br />
-  5-[Theano](http://deeplearning.net/software/theano/) <br />
-  6-[Mxnet](https://mxnet.apache.org/) <br />
+  1- [Keras](https://keras.io/) version 2.2.4 on Tensorflow version 1.5 <br /> 
+  2-[Chainer](https://docs.chainer.org/en/stable/glance.html) version 4.5.0 <br /> 
+  3-[Tensorflow](https://www.tensorflow.org/) version 1.5<br /> 
+  4-[Pytorch](https://pytorch.org/) version 0.4.1<br />
+  5-[Theano](http://deeplearning.net/software/theano/) version 1.0.2 <br />
+  6-[Mxnet](https://mxnet.apache.org/) version 1.3.0<br />
 
 ## The Experiments comparing those frameworks over 4 datsets:
   1- [MNIST](http://yann.lecun.com/exdb/mnist/) <br />

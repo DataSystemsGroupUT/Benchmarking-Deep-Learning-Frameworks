@@ -28,7 +28,8 @@ There are two experiments one of them uses CPU and the other uses GPU.
     * The logs of the experiment 
     
  ### 3- Installation Guide <br />
-    * It contains the required packages to be included for each environment.<br />
+    * It contains the required packages to be included for each environment.
+    * It's recommended to create different environmnet for each framework.
 
   
  ## Experiment Logging:

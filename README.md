@@ -42,8 +42,8 @@ There are two experiments one of them uses CPU and the other uses GPU.
 
 ## Optional hyperparameters:<br />
 There are  many other optional parameters including: 
-     * Learning Rate=0.01
-     * momentum=0.5
-     * Weight Decay=1e-6
-     * batch size = 128.
+     * Learning Rate=0.01 <br />
+     * momentum=0.5 <br />
+     * Weight Decay=1e-6 <br />
+     * batch size = 128 <br />
 

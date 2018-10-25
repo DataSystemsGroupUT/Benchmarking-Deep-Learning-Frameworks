@@ -41,9 +41,9 @@ There are two experiments one of them uses CPU and the other uses GPU.
  4- There is a method in the main function that is called runModel, this methods holds the name of the dataset and the number of       epochs needed for this run.
 
 ## Optional hyperparameters:<br />
-There are  many other optional parameters including: 
-     * Learning Rate=0.01 <br />
-     * momentum=0.5 <br />
-     * Weight Decay=1e-6 <br />
-     * batch size = 128 <br />
+There are  many other optional parameters including: <br />
+     1- Learning Rate=0.01 <br />
+     2- momentum=0.5 <br />
+     3- Weight Decay=1e-6 <br />
+     4- batch size = 128 <br />
 

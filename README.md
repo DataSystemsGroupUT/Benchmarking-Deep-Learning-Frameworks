@@ -1,6 +1,6 @@
 # Benchmarking-Deep-Learning-Frameworks
 ## The frameworks that are included in this benchmark are:
-  1- [Keras](https://keras.io/) version 2.2.4 on Tensorflow version 1.5 <br /> 
+  1-[Keras](https://keras.io/) version 2.2.4 on Tensorflow version 1.5 <br /> 
   2-[Chainer](https://docs.chainer.org/en/stable/glance.html) version 4.5.0 <br /> 
   3-[Tensorflow](https://www.tensorflow.org/) version 1.5<br /> 
   4-[Pytorch](https://pytorch.org/) version 0.4.1<br />
@@ -17,6 +17,9 @@ There are two experiments one of them uses CPU and the other uses GPU.
 
 ## This repository is divided into 3 folders:
  ### 1- CPU Experiment <br />
+  * The CPU experiments are performed on a single machine running on Centos release 7.5.1804 with 32 core Intel Xeon Processor (Skylake,  IBRS) @ 2.00GHz;64 GB DIMM memory; and 240 GB SSD hard drive.
+  * For Keras, version 2.2.4 is used on Tensorflow 1.5. For Chainer, version 4.5.0 is used. For Tensorflow, version 1.5 is used. For Pytorch, version 0.4.1 is used, For Theano, version 1.0.2 is used. For MXNet, version 1.3.0 is used.
+
     * It contain the CPU source code 
     * The Generated graphs 
     * The logs of the experiment 

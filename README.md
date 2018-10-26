@@ -27,7 +27,6 @@ There are two experiments one of them uses CPU and the other uses GPU.
     *The GPU experiments are performed on a single machine running on Debian GNU/Linux 9 (stretch) with 8 core Intel(R) Xeon(R) CPU @ 2.00GHz; NVIDIA Tesla P4;36 GB DIMM memory; and 300 GB SSD hard drive.
     *For Keras, version 2.2.4 is used and run on Tensorflow version 1.11.0. For Chainer, version 4.5.0 is used. For Tensorflow, version 1.11.0 is used. For Pytorch, version 0.4.1 is used, For Theano, version 1.0.2 is used. For MXNet, version 1.3.0 is used.
     *For Chainer, MXNet and Pytorch, we used CUDA 9.2 and cuDNN 7.2.1, and for Tensorflow, Keras, and Theano, we used CUDA 10.0 and cuDNN 7.3
-
     * It contain the GPU experiment 
     * The Generated graphs 
     * The logs of the experiment 

@@ -28,7 +28,7 @@ There are two experiments one of them uses CPU and the other uses GPU.
     * The logs of the experiment 
        
  ### 2- GPU Experiment <br />
-    *The GPU experiments are performed on a single machine running on Debian GNU/Linux 9 (stretch) with 8 core Intel(R) Xeon(R) CPU @ 2.00GHz; NVIDIA Tesla P4;36 GB DIMM memory; and 300 GB SSD hard drive.
+    * The GPU experiments are performed on a single machine running on Debian GNU/Linux 9 (stretch) with 8 core Intel(R) Xeon(R) CPU @ 2.00GHz; NVIDIA Tesla P4;36 GB DIMM memory; and 300 GB SSD hard drive.
     * For Keras, version 2.2.4 is used and run on Tensorflow version 1.11.0. 
     * For Chainer, version 4.5.0 is used. 
     * For Tensorflow, version 1.11.0 is used. 
